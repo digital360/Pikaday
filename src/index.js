@@ -11,25 +11,22 @@ const {
     removeEvent,
     isArray,
     isDate,
-    isWeekend,
-    getDaysInMonth,
     setToStartOfDay,
-    compareDates,
     extend,
     fireEvent,
     adjustCalendar
 } = require('./utils')
 
 const {
-    renderDayName,
-    renderDay,
-    renderWeek,
-    renderRow,
-    renderBody,
-    renderHead,
-    renderTitle,
-    renderTable
+    renderTitle
 } = require('./renderUtils')
+
+const {
+    renderDays,
+    renderMonths,
+    renderYears,
+    renderFinancialYears
+} = require('./render')
 
 let defaults = require('./defaults')
 
@@ -573,6 +570,7 @@ Pikaday.prototype = {
             return;
         }
         var opts = this._o,
+            layout = opts.layout,
             minYear = opts.minYear,
             maxYear = opts.maxYear,
             minMonth = opts.minMonth,
@@ -596,7 +594,22 @@ Pikaday.prototype = {
         randId = 'pika-title-' + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 2);
 
         for (var c = 0; c < opts.numberOfMonths; c++) {
-            html += '<div class="pika-lendar">' + renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) + this.render(this.calendars[c].year, this.calendars[c].month, randId) + '</div>';
+            let renderedBody = '';
+
+            if (layout === 'days') {
+                renderedBody = renderDays(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+            } else if (layout === 'months') {
+                renderedBody = renderMonths(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+            } else if (layout === 'years') {
+                renderedBody = renderYears(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+            } else if (layout === 'financialYears') {
+                renderedBody = renderFinancialYears(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+            }
+
+            html += '<div class="pika-lendar">' 
+                + renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) 
+                + renderedBody
+                + '</div>';
         }
 
         this.el.innerHTML = html;
@@ -668,101 +681,6 @@ Pikaday.prototype = {
 
         this.el.style.left = left + 'px';
         this.el.style.top = top + 'px';
-    },
-
-    /**
-     * render HTML for a particular month
-     */
-    render: function(year, month, randId)
-    {
-        var opts   = this._o,
-            now    = new Date(),
-            days   = getDaysInMonth(year, month),
-            before = new Date(year, month, 1).getDay(),
-            data   = [],
-            row    = [];
-        setToStartOfDay(now);
-        if (opts.firstDay > 0) {
-            before -= opts.firstDay;
-            if (before < 0) {
-                before += 7;
-            }
-        }
-        var previousMonth = month === 0 ? 11 : month - 1,
-            nextMonth = month === 11 ? 0 : month + 1,
-            yearOfPreviousMonth = month === 0 ? year - 1 : year,
-            yearOfNextMonth = month === 11 ? year + 1 : year,
-            daysInPreviousMonth = getDaysInMonth(yearOfPreviousMonth, previousMonth);
-        var cells = days + before,
-            after = cells;
-        while(after > 7) {
-            after -= 7;
-        }
-        cells += 7 - after;
-        var isWeekSelected = false;
-        for (var i = 0, r = 0; i < cells; i++)
-        {
-            var day = new Date(year, month, 1 + (i - before)),
-                isSelected = isDate(this._d) ? compareDates(day, this._d) : false,
-                isToday = compareDates(day, now),
-                hasEvent = opts.events.indexOf(day.toDateString()) !== -1 ? true : false,
-                isEmpty = i < before || i >= (days + before),
-                dayNumber = 1 + (i - before),
-                monthNumber = month,
-                yearNumber = year,
-                isStartRange = opts.startRange && compareDates(opts.startRange, day),
-                isEndRange = opts.endRange && compareDates(opts.endRange, day),
-                isInRange = opts.startRange && opts.endRange && opts.startRange < day && day < opts.endRange,
-                isDisabled = (opts.minDate && day < opts.minDate) ||
-                             (opts.maxDate && day > opts.maxDate) ||
-                             (opts.disableWeekends && isWeekend(day)) ||
-                             (opts.disableDayFn && opts.disableDayFn(day));
-
-            if (isEmpty) {
-                if (i < before) {
-                    dayNumber = daysInPreviousMonth + dayNumber;
-                    monthNumber = previousMonth;
-                    yearNumber = yearOfPreviousMonth;
-                } else {
-                    dayNumber = dayNumber - days;
-                    monthNumber = nextMonth;
-                    yearNumber = yearOfNextMonth;
-                }
-            }
-
-            var dayConfig = {
-                    day: dayNumber,
-                    month: monthNumber,
-                    year: yearNumber,
-                    hasEvent: hasEvent,
-                    isSelected: isSelected,
-                    isToday: isToday,
-                    isDisabled: isDisabled,
-                    isEmpty: isEmpty,
-                    isStartRange: isStartRange,
-                    isEndRange: isEndRange,
-                    isInRange: isInRange,
-                    showDaysInNextAndPreviousMonths: opts.showDaysInNextAndPreviousMonths,
-                    enableSelectionDaysInNextAndPreviousMonths: opts.enableSelectionDaysInNextAndPreviousMonths
-                };
-
-            if (opts.pickWholeWeek && isSelected) {
-                isWeekSelected = true;
-            }
-
-            row.push(renderDay(dayConfig));
-
-            if (++r === 7) {
-                if (opts.showWeekNumber) {
-                    row.unshift(renderWeek(i - before, month, year));
-                }
-                data.push(renderRow(row, opts.isRTL, opts.pickWholeWeek, isWeekSelected));
-                row = [];
-                r = 0;
-                isWeekSelected = false;
-            }
-        }
-        return renderTable(opts, data, randId);
     },
 
     isVisible: function()

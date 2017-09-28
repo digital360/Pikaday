@@ -1,5 +1,11 @@
 let defaults = {
 
+    // lets the user select a range instead of a single date
+    selectRange: false,
+
+    // lets the user choose between a days / months / years / financialYears view
+    layout: 'days',
+
     // bind the picker to a form field
     field: null,
 

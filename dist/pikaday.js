@@ -70,7 +70,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 117);
+/******/ 	return __webpack_require__(__webpack_require__.s = 118);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1906,7 +1906,7 @@ function loadLocale(name) {
             module && module.exports) {
         try {
             oldLocale = globalLocale._abbr;
-            __webpack_require__(119)("./" + name);
+            __webpack_require__(120)("./" + name);
             // because defineLocale currently also sets the global locale, we
             // want to undo that for lazy loaded locales
             getSetGlobalLocale(oldLocale);
@@ -4541,10 +4541,166 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(118)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(119)(module)))
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+const hasEventListeners = !!window.addEventListener
+
+const trim = function(str)
+{
+    return str.trim ? str.trim() : str.replace(/^\s+|\s+$/g,'');
+}
+
+const addClass = function(el, cn)
+{
+    if (!hasClass(el, cn)) {
+        el.className = (el.className === '') ? cn : el.className + ' ' + cn;
+    }
+}
+
+const addEvent = function(el, e, callback, capture)
+{
+    if (hasEventListeners) {
+        el.addEventListener(e, callback, !!capture);
+    } else {
+        el.attachEvent('on' + e, callback);
+    }
+}
+
+const hasClass = function(el, cn)
+{
+    return (' ' + el.className + ' ').indexOf(' ' + cn + ' ') !== -1;
+}
+
+const removeClass = function(el, cn)
+{
+    el.className = trim((' ' + el.className + ' ').replace(' ' + cn + ' ', ' '));
+}
+
+const removeEvent = function(el, e, callback, capture)
+{
+    if (hasEventListeners) {
+        el.removeEventListener(e, callback, !!capture);
+    } else {
+        el.detachEvent('on' + e, callback);
+    }
+}
+
+const isArray = function(obj)
+{
+    return (/Array/).test(Object.prototype.toString.call(obj));
+}
+
+const isDate = function(obj)
+{
+    return (/Date/).test(Object.prototype.toString.call(obj)) && !isNaN(obj.getTime());
+}
+
+const isWeekend = function(date)
+{
+    var day = date.getDay();
+    return day === 0 || day === 6;
+}
+
+const isLeapYear = function(year)
+{
+    // solution by Matti Virkkunen: http://stackoverflow.com/a/4881951
+    return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
+}
+
+const getDaysInMonth = function(year, month)
+{
+    return [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+}
+
+const setToStartOfDay = function(date)
+{
+    if (isDate(date)) date.setHours(0,0,0,0);
+}
+
+const compareDates = function(a,b)
+{
+    // weak date comparison (use setToStartOfDay(date) to ensure correct result)
+    return a.getTime() === b.getTime();
+}
+
+const extend = function(to, from, overwrite)
+{
+    var prop, hasProp;
+    for (prop in from) {
+        hasProp = to[prop] !== undefined;
+        if (hasProp && typeof from[prop] === 'object' && from[prop] !== null && from[prop].nodeName === undefined) {
+            if (isDate(from[prop])) {
+                if (overwrite) {
+                    to[prop] = new Date(from[prop].getTime());
+                }
+            }
+            else if (isArray(from[prop])) {
+                if (overwrite) {
+                    to[prop] = from[prop].slice(0);
+                }
+            } else {
+                to[prop] = extend({}, from[prop], overwrite);
+            }
+        } else if (overwrite || !hasProp) {
+            to[prop] = from[prop];
+        }
+    }
+    return to;
+}
+
+const fireEvent = function(el, eventName, data)
+{
+    var ev;
+
+    if (document.createEvent) {
+        ev = document.createEvent('HTMLEvents');
+        ev.initEvent(eventName, true, false);
+        ev = extend(ev, data);
+        el.dispatchEvent(ev);
+    } else if (document.createEventObject) {
+        ev = document.createEventObject();
+        ev = extend(ev, data);
+        el.fireEvent('on' + eventName, ev);
+    }
+}
+
+const adjustCalendar = function(calendar) {
+    if (calendar.month < 0) {
+        calendar.year -= Math.ceil(Math.abs(calendar.month)/12);
+        calendar.month += 12;
+    }
+    if (calendar.month > 11) {
+        calendar.year += Math.floor(Math.abs(calendar.month)/12);
+        calendar.month -= 12;
+    }
+    return calendar;
+}
+
+module.exports = {
+    hasEventListeners,
+    addClass,
+    addEvent,
+    hasClass,
+    removeClass,
+    removeEvent,
+    isArray,
+    isDate,
+    isWeekend,
+    isLeapYear,
+    getDaysInMonth,
+    setToStartOfDay,
+    compareDates,
+    extend,
+    fireEvent,
+    adjustCalendar
+}
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -4622,7 +4778,7 @@ return af;
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -4769,7 +4925,7 @@ return ar;
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -4833,7 +4989,7 @@ return arDz;
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -4897,7 +5053,7 @@ return arKw;
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5028,7 +5184,7 @@ return arLy;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5093,7 +5249,7 @@ return arMa;
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5203,7 +5359,7 @@ return arSa;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5267,7 +5423,7 @@ return arTn;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5377,7 +5533,7 @@ return az;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5516,7 +5672,7 @@ return be;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5611,7 +5767,7 @@ return bg;
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5735,7 +5891,7 @@ return bn;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5859,7 +6015,7 @@ return bo;
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -5972,7 +6128,7 @@ return br;
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6120,7 +6276,7 @@ return bs;
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6213,7 +6369,7 @@ return ca;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6390,7 +6546,7 @@ return cs;
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6458,7 +6614,7 @@ return cv;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6544,7 +6700,7 @@ return cy;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6609,7 +6765,7 @@ return da;
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6692,7 +6848,7 @@ return de;
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6776,7 +6932,7 @@ return deAt;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6859,7 +7015,7 @@ return deCh;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -6964,7 +7120,7 @@ return dv;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7069,7 +7225,7 @@ return el;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7141,7 +7297,7 @@ return enAu;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7209,7 +7365,7 @@ return enCa;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7281,7 +7437,7 @@ return enGb;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7353,7 +7509,7 @@ return enIe;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7425,7 +7581,7 @@ return enNz;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7503,7 +7659,7 @@ return eo;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7591,7 +7747,7 @@ return es;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7678,7 +7834,7 @@ return esDo;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7763,7 +7919,7 @@ return et;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7834,7 +7990,7 @@ return eu;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -7946,7 +8102,7 @@ return fa;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8058,7 +8214,7 @@ return fi;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8123,7 +8279,7 @@ return fo;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8211,7 +8367,7 @@ return fr;
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8290,7 +8446,7 @@ return frCa;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8373,7 +8529,7 @@ return frCh;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8453,7 +8609,7 @@ return fy;
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8534,7 +8690,7 @@ return gd;
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8616,7 +8772,7 @@ return gl;
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8743,7 +8899,7 @@ return gomLatn;
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8847,7 +9003,7 @@ return he;
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -8976,7 +9132,7 @@ return hi;
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9126,7 +9282,7 @@ return hr;
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9240,7 +9396,7 @@ return hu;
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9340,7 +9496,7 @@ return hyAm;
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9428,7 +9584,7 @@ return id;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9560,7 +9716,7 @@ return is;
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9635,7 +9791,7 @@ return it;
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9720,7 +9876,7 @@ return ja;
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9808,7 +9964,7 @@ return jv;
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9902,7 +10058,7 @@ return ka;
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -9994,7 +10150,7 @@ return kk;
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10057,7 +10213,7 @@ return km;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10188,7 +10344,7 @@ return kn;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10262,7 +10418,7 @@ return ko;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10355,7 +10511,7 @@ return ky;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10497,7 +10653,7 @@ return lb;
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10572,7 +10728,7 @@ return lo;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10694,7 +10850,7 @@ return lt;
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10796,7 +10952,7 @@ return lv;
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10912,7 +11068,7 @@ return me;
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -10981,7 +11137,7 @@ return mi;
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11076,7 +11232,7 @@ return mk;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11162,7 +11318,7 @@ return ml;
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11326,7 +11482,7 @@ return mr;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11413,7 +11569,7 @@ return ms;
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11501,7 +11657,7 @@ return msMy;
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11602,7 +11758,7 @@ return my;
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11670,7 +11826,7 @@ return nb;
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11798,7 +11954,7 @@ return ne;
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11891,7 +12047,7 @@ return nl;
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -11984,7 +12140,7 @@ return nlBe;
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12049,7 +12205,7 @@ return nn;
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12178,7 +12334,7 @@ return paIn;
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12290,7 +12446,7 @@ return pl;
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12360,7 +12516,7 @@ return pt;
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12426,7 +12582,7 @@ return ptBr;
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12506,7 +12662,7 @@ return ro;
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12694,7 +12850,7 @@ return ru;
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12797,7 +12953,7 @@ return sd;
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12863,7 +13019,7 @@ return se;
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -12939,7 +13095,7 @@ return si;
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13094,7 +13250,7 @@ return sk;
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13261,7 +13417,7 @@ return sl;
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13336,7 +13492,7 @@ return sq;
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13451,7 +13607,7 @@ return sr;
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13566,7 +13722,7 @@ return srCyrl;
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13660,7 +13816,7 @@ return ss;
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13734,7 +13890,7 @@ return sv;
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13798,7 +13954,7 @@ return sw;
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -13933,7 +14089,7 @@ return ta;
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14027,7 +14183,7 @@ return te;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14100,7 +14256,7 @@ return tet;
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14172,7 +14328,7 @@ return th;
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14239,7 +14395,7 @@ return tlPh;
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14364,7 +14520,7 @@ return tlh;
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14459,7 +14615,7 @@ return tr;
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14555,7 +14711,7 @@ return tzl;
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14618,7 +14774,7 @@ return tzm;
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14681,7 +14837,7 @@ return tzmLatn;
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14837,7 +14993,7 @@ return uk;
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -14941,7 +15097,7 @@ return ur;
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15004,7 +15160,7 @@ return uz;
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15067,7 +15223,7 @@ return uzLatn;
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15151,7 +15307,7 @@ return vi;
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15224,7 +15380,7 @@ return xPseudo;
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15289,7 +15445,7 @@ return yo;
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15405,7 +15561,7 @@ return zhCn;
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15515,7 +15671,7 @@ return zhHk;
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -15624,163 +15780,175 @@ return zhTw;
 
 
 /***/ }),
-/* 116 */
-/***/ (function(module, exports) {
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
 
-const hasEventListeners = !!window.addEventListener
+const {
+    isArray
+} = __webpack_require__(1)
 
-const trim = function(str)
+const renderDayName = function(opts, day, abbr)
 {
-    return str.trim ? str.trim() : str.replace(/^\s+|\s+$/g,'');
-}
-
-const addClass = function(el, cn)
-{
-    if (!hasClass(el, cn)) {
-        el.className = (el.className === '') ? cn : el.className + ' ' + cn;
+    day += opts.firstDay;
+    while (day >= 7) {
+        day -= 7;
     }
+    return abbr ? opts.i18n.weekdaysShort[day] : opts.i18n.weekdays[day];
 }
 
-const addEvent = function(el, e, callback, capture)
+const renderDay = function(opts)
 {
-    if (hasEventListeners) {
-        el.addEventListener(e, callback, !!capture);
-    } else {
-        el.attachEvent('on' + e, callback);
-    }
-}
+    var arr = [];
+    var ariaSelected = 'false';
+    if (opts.isEmpty) {
+        if (opts.showDaysInNextAndPreviousMonths) {
+            arr.push('is-outside-current-month');
 
-const hasClass = function(el, cn)
-{
-    return (' ' + el.className + ' ').indexOf(' ' + cn + ' ') !== -1;
-}
-
-const removeClass = function(el, cn)
-{
-    el.className = trim((' ' + el.className + ' ').replace(' ' + cn + ' ', ' '));
-}
-
-const removeEvent = function(el, e, callback, capture)
-{
-    if (hasEventListeners) {
-        el.removeEventListener(e, callback, !!capture);
-    } else {
-        el.detachEvent('on' + e, callback);
-    }
-}
-
-const isArray = function(obj)
-{
-    return (/Array/).test(Object.prototype.toString.call(obj));
-}
-
-const isDate = function(obj)
-{
-    return (/Date/).test(Object.prototype.toString.call(obj)) && !isNaN(obj.getTime());
-}
-
-const isWeekend = function(date)
-{
-    var day = date.getDay();
-    return day === 0 || day === 6;
-}
-
-const isLeapYear = function(year)
-{
-    // solution by Matti Virkkunen: http://stackoverflow.com/a/4881951
-    return year % 4 === 0 && year % 100 !== 0 || year % 400 === 0;
-}
-
-const getDaysInMonth = function(year, month)
-{
-    return [31, isLeapYear(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
-}
-
-const setToStartOfDay = function(date)
-{
-    if (isDate(date)) date.setHours(0,0,0,0);
-}
-
-const compareDates = function(a,b)
-{
-    // weak date comparison (use setToStartOfDay(date) to ensure correct result)
-    return a.getTime() === b.getTime();
-}
-
-const extend = function(to, from, overwrite)
-{
-    var prop, hasProp;
-    for (prop in from) {
-        hasProp = to[prop] !== undefined;
-        if (hasProp && typeof from[prop] === 'object' && from[prop] !== null && from[prop].nodeName === undefined) {
-            if (isDate(from[prop])) {
-                if (overwrite) {
-                    to[prop] = new Date(from[prop].getTime());
-                }
+            if(!opts.enableSelectionDaysInNextAndPreviousMonths) {
+                arr.push('is-selection-disabled');
             }
-            else if (isArray(from[prop])) {
-                if (overwrite) {
-                    to[prop] = from[prop].slice(0);
-                }
-            } else {
-                to[prop] = extend({}, from[prop], overwrite);
-            }
-        } else if (overwrite || !hasProp) {
-            to[prop] = from[prop];
+
+        } else {
+            return '<td class="is-empty"></td>';
         }
     }
-    return to;
+    if (opts.isDisabled) {
+        arr.push('is-disabled');
+    }
+    if (opts.isToday) {
+        arr.push('is-today');
+    }
+    if (opts.isSelected) {
+        arr.push('is-selected');
+        ariaSelected = 'true';
+    }
+    if (opts.hasEvent) {
+        arr.push('has-event');
+    }
+    if (opts.isInRange) {
+        arr.push('is-inrange');
+    }
+    if (opts.isStartRange) {
+        arr.push('is-startrange');
+    }
+    if (opts.isEndRange) {
+        arr.push('is-endrange');
+    }
+    return '<td data-day="' + opts.day + '" class="' + arr.join(' ') + '" aria-selected="' + ariaSelected + '">' +
+             '<button class="pika-button pika-day" type="button" ' +
+                'data-pika-year="' + opts.year + '" data-pika-month="' + opts.month + '" data-pika-day="' + opts.day + '">' +
+                    opts.day +
+             '</button>' +
+           '</td>';
 }
 
-const fireEvent = function(el, eventName, data)
+const renderWeek = function (d, m, y) {
+    // Lifted from http://javascript.about.com/library/blweekyear.htm, lightly modified.
+    var onejan = new Date(y, 0, 1),
+        weekNum = Math.ceil((((new Date(y, m, d) - onejan) / 86400000) + onejan.getDay()+1)/7);
+    return '<td class="pika-week">' + weekNum + '</td>';
+}
+
+const renderRow = function(days, isRTL, pickWholeWeek, isRowSelected)
 {
-    var ev;
-
-    if (document.createEvent) {
-        ev = document.createEvent('HTMLEvents');
-        ev.initEvent(eventName, true, false);
-        ev = extend(ev, data);
-        el.dispatchEvent(ev);
-    } else if (document.createEventObject) {
-        ev = document.createEventObject();
-        ev = extend(ev, data);
-        el.fireEvent('on' + eventName, ev);
-    }
+    return '<tr class="pika-row' + (pickWholeWeek ? ' pick-whole-week' : '') + (isRowSelected ? ' is-selected' : '') + '">' + (isRTL ? days.reverse() : days).join('') + '</tr>';
 }
 
-const adjustCalendar = function(calendar) {
-    if (calendar.month < 0) {
-        calendar.year -= Math.ceil(Math.abs(calendar.month)/12);
-        calendar.month += 12;
+const renderBody = function(rows)
+{
+    return '<tbody>' + rows.join('') + '</tbody>';
+}
+
+const renderHead = function(opts)
+{
+    var i, arr = [];
+    if (opts.showWeekNumber) {
+        arr.push('<th></th>');
     }
-    if (calendar.month > 11) {
-        calendar.year += Math.floor(Math.abs(calendar.month)/12);
-        calendar.month -= 12;
+    for (i = 0; i < 7; i++) {
+        arr.push('<th scope="col"><abbr title="' + renderDayName(opts, i) + '">' + renderDayName(opts, i, true) + '</abbr></th>');
     }
-    return calendar;
+    return '<thead><tr>' + (opts.isRTL ? arr.reverse() : arr).join('') + '</tr></thead>';
+}
+
+const renderTitle = function(instance, c, year, month, refYear, randId)
+{
+    var i, j, arr,
+        opts = instance._o,
+        isMinYear = year === opts.minYear,
+        isMaxYear = year === opts.maxYear,
+        html = '<div id="' + randId + '" class="pika-title" role="heading" aria-live="assertive">',
+        monthHtml,
+        yearHtml,
+        prev = true,
+        next = true;
+
+    for (arr = [], i = 0; i < 12; i++) {
+        arr.push('<option value="' + (year === refYear ? i - c : 12 + i - c) + '"' +
+            (i === month ? ' selected="selected"': '') +
+            ((isMinYear && i < opts.minMonth) || (isMaxYear && i > opts.maxMonth) ? 'disabled="disabled"' : '') + '>' +
+            opts.i18n.months[i] + '</option>');
+    }
+
+    monthHtml = '<div class="pika-label">' + opts.i18n.months[month] + '<select class="pika-select pika-select-month" tabindex="-1">' + arr.join('') + '</select></div>';
+
+    if (isArray(opts.yearRange)) {
+        i = opts.yearRange[0];
+        j = opts.yearRange[1] + 1;
+    } else {
+        i = year - opts.yearRange;
+        j = 1 + year + opts.yearRange;
+    }
+
+    for (arr = []; i < j && i <= opts.maxYear; i++) {
+        if (i >= opts.minYear) {
+            arr.push('<option value="' + i + '"' + (i === year ? ' selected="selected"': '') + '>' + (i) + '</option>');
+        }
+    }
+    yearHtml = '<div class="pika-label">' + year + opts.yearSuffix + '<select class="pika-select pika-select-year" tabindex="-1">' + arr.join('') + '</select></div>';
+
+    if (opts.showMonthAfterYear) {
+        html += yearHtml + monthHtml;
+    } else {
+        html += monthHtml + yearHtml;
+    }
+
+    if (isMinYear && (month === 0 || opts.minMonth >= month)) {
+        prev = false;
+    }
+
+    if (isMaxYear && (month === 11 || opts.maxMonth <= month)) {
+        next = false;
+    }
+
+    if (c === 0) {
+        html += '<button class="pika-prev' + (prev ? '' : ' is-disabled') + '" type="button">' + opts.i18n.previousMonth + '</button>';
+    }
+    if (c === (instance._o.numberOfMonths - 1) ) {
+        html += '<button class="pika-next' + (next ? '' : ' is-disabled') + '" type="button">' + opts.i18n.nextMonth + '</button>';
+    }
+
+    return html += '</div>';
+}
+
+const renderTable = function(opts, data, randId)
+{
+    return '<table cellpadding="0" cellspacing="0" class="pika-table" role="grid" aria-labelledby="' + randId + '">' + renderHead(opts) + renderBody(data) + '</table>';
 }
 
 module.exports = {
-    hasEventListeners,
-    addClass,
-    addEvent,
-    hasClass,
-    removeClass,
-    removeEvent,
-    isArray,
-    isDate,
-    isWeekend,
-    isLeapYear,
-    getDaysInMonth,
-    setToStartOfDay,
-    compareDates,
-    extend,
-    fireEvent,
-    adjustCalendar
+    renderDayName,
+    renderDay,
+    renderWeek,
+    renderRow,
+    renderBody,
+    renderHead,
+    renderTitle,
+    renderTable
 }
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15797,27 +15965,24 @@ const {
     removeEvent,
     isArray,
     isDate,
-    isWeekend,
-    getDaysInMonth,
     setToStartOfDay,
-    compareDates,
     extend,
     fireEvent,
     adjustCalendar
-} = __webpack_require__(116)
+} = __webpack_require__(1)
 
 const {
-    renderDayName,
-    renderDay,
-    renderWeek,
-    renderRow,
-    renderBody,
-    renderHead,
-    renderTitle,
-    renderTable
-} = __webpack_require__(120)
+    renderTitle
+} = __webpack_require__(117)
 
-let defaults = __webpack_require__(121)
+const {
+    renderDays,
+    renderMonths,
+    renderYears,
+    renderFinancialYears
+} = __webpack_require__(121)
+
+let defaults = __webpack_require__(122)
 
 /**
  * feature detection and helper functions
@@ -16359,6 +16524,7 @@ Pikaday.prototype = {
             return;
         }
         var opts = this._o,
+            layout = opts.layout,
             minYear = opts.minYear,
             maxYear = opts.maxYear,
             minMonth = opts.minMonth,
@@ -16382,7 +16548,22 @@ Pikaday.prototype = {
         randId = 'pika-title-' + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 2);
 
         for (var c = 0; c < opts.numberOfMonths; c++) {
-            html += '<div class="pika-lendar">' + renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) + this.render(this.calendars[c].year, this.calendars[c].month, randId) + '</div>';
+            let renderedBody = '';
+
+            if (layout === 'days') {
+                renderedBody = renderDays(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+            } else if (layout === 'months') {
+                renderedBody = renderMonths(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+            } else if (layout === 'years') {
+                renderedBody = renderYears(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+            } else if (layout === 'financialYears') {
+                renderedBody = renderFinancialYears(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+            }
+
+            html += '<div class="pika-lendar">' 
+                + renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) 
+                + renderedBody
+                + '</div>';
         }
 
         this.el.innerHTML = html;
@@ -16456,101 +16637,6 @@ Pikaday.prototype = {
         this.el.style.top = top + 'px';
     },
 
-    /**
-     * render HTML for a particular month
-     */
-    render: function(year, month, randId)
-    {
-        var opts   = this._o,
-            now    = new Date(),
-            days   = getDaysInMonth(year, month),
-            before = new Date(year, month, 1).getDay(),
-            data   = [],
-            row    = [];
-        setToStartOfDay(now);
-        if (opts.firstDay > 0) {
-            before -= opts.firstDay;
-            if (before < 0) {
-                before += 7;
-            }
-        }
-        var previousMonth = month === 0 ? 11 : month - 1,
-            nextMonth = month === 11 ? 0 : month + 1,
-            yearOfPreviousMonth = month === 0 ? year - 1 : year,
-            yearOfNextMonth = month === 11 ? year + 1 : year,
-            daysInPreviousMonth = getDaysInMonth(yearOfPreviousMonth, previousMonth);
-        var cells = days + before,
-            after = cells;
-        while(after > 7) {
-            after -= 7;
-        }
-        cells += 7 - after;
-        var isWeekSelected = false;
-        for (var i = 0, r = 0; i < cells; i++)
-        {
-            var day = new Date(year, month, 1 + (i - before)),
-                isSelected = isDate(this._d) ? compareDates(day, this._d) : false,
-                isToday = compareDates(day, now),
-                hasEvent = opts.events.indexOf(day.toDateString()) !== -1 ? true : false,
-                isEmpty = i < before || i >= (days + before),
-                dayNumber = 1 + (i - before),
-                monthNumber = month,
-                yearNumber = year,
-                isStartRange = opts.startRange && compareDates(opts.startRange, day),
-                isEndRange = opts.endRange && compareDates(opts.endRange, day),
-                isInRange = opts.startRange && opts.endRange && opts.startRange < day && day < opts.endRange,
-                isDisabled = (opts.minDate && day < opts.minDate) ||
-                             (opts.maxDate && day > opts.maxDate) ||
-                             (opts.disableWeekends && isWeekend(day)) ||
-                             (opts.disableDayFn && opts.disableDayFn(day));
-
-            if (isEmpty) {
-                if (i < before) {
-                    dayNumber = daysInPreviousMonth + dayNumber;
-                    monthNumber = previousMonth;
-                    yearNumber = yearOfPreviousMonth;
-                } else {
-                    dayNumber = dayNumber - days;
-                    monthNumber = nextMonth;
-                    yearNumber = yearOfNextMonth;
-                }
-            }
-
-            var dayConfig = {
-                    day: dayNumber,
-                    month: monthNumber,
-                    year: yearNumber,
-                    hasEvent: hasEvent,
-                    isSelected: isSelected,
-                    isToday: isToday,
-                    isDisabled: isDisabled,
-                    isEmpty: isEmpty,
-                    isStartRange: isStartRange,
-                    isEndRange: isEndRange,
-                    isInRange: isInRange,
-                    showDaysInNextAndPreviousMonths: opts.showDaysInNextAndPreviousMonths,
-                    enableSelectionDaysInNextAndPreviousMonths: opts.enableSelectionDaysInNextAndPreviousMonths
-                };
-
-            if (opts.pickWholeWeek && isSelected) {
-                isWeekSelected = true;
-            }
-
-            row.push(renderDay(dayConfig));
-
-            if (++r === 7) {
-                if (opts.showWeekNumber) {
-                    row.unshift(renderWeek(i - before, month, year));
-                }
-                data.push(renderRow(row, opts.isRTL, opts.pickWholeWeek, isWeekSelected));
-                row = [];
-                r = 0;
-                isWeekSelected = false;
-            }
-        }
-        return renderTable(opts, data, randId);
-    },
-
     isVisible: function()
     {
         return this._v;
@@ -16622,7 +16708,7 @@ Pikaday.prototype = {
 module.exports = Pikaday
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -16650,240 +16736,240 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 1,
-	"./af.js": 1,
-	"./ar": 2,
-	"./ar-dz": 3,
-	"./ar-dz.js": 3,
-	"./ar-kw": 4,
-	"./ar-kw.js": 4,
-	"./ar-ly": 5,
-	"./ar-ly.js": 5,
-	"./ar-ma": 6,
-	"./ar-ma.js": 6,
-	"./ar-sa": 7,
-	"./ar-sa.js": 7,
-	"./ar-tn": 8,
-	"./ar-tn.js": 8,
-	"./ar.js": 2,
-	"./az": 9,
-	"./az.js": 9,
-	"./be": 10,
-	"./be.js": 10,
-	"./bg": 11,
-	"./bg.js": 11,
-	"./bn": 12,
-	"./bn.js": 12,
-	"./bo": 13,
-	"./bo.js": 13,
-	"./br": 14,
-	"./br.js": 14,
-	"./bs": 15,
-	"./bs.js": 15,
-	"./ca": 16,
-	"./ca.js": 16,
-	"./cs": 17,
-	"./cs.js": 17,
-	"./cv": 18,
-	"./cv.js": 18,
-	"./cy": 19,
-	"./cy.js": 19,
-	"./da": 20,
-	"./da.js": 20,
-	"./de": 21,
-	"./de-at": 22,
-	"./de-at.js": 22,
-	"./de-ch": 23,
-	"./de-ch.js": 23,
-	"./de.js": 21,
-	"./dv": 24,
-	"./dv.js": 24,
-	"./el": 25,
-	"./el.js": 25,
-	"./en-au": 26,
-	"./en-au.js": 26,
-	"./en-ca": 27,
-	"./en-ca.js": 27,
-	"./en-gb": 28,
-	"./en-gb.js": 28,
-	"./en-ie": 29,
-	"./en-ie.js": 29,
-	"./en-nz": 30,
-	"./en-nz.js": 30,
-	"./eo": 31,
-	"./eo.js": 31,
-	"./es": 32,
-	"./es-do": 33,
-	"./es-do.js": 33,
-	"./es.js": 32,
-	"./et": 34,
-	"./et.js": 34,
-	"./eu": 35,
-	"./eu.js": 35,
-	"./fa": 36,
-	"./fa.js": 36,
-	"./fi": 37,
-	"./fi.js": 37,
-	"./fo": 38,
-	"./fo.js": 38,
-	"./fr": 39,
-	"./fr-ca": 40,
-	"./fr-ca.js": 40,
-	"./fr-ch": 41,
-	"./fr-ch.js": 41,
-	"./fr.js": 39,
-	"./fy": 42,
-	"./fy.js": 42,
-	"./gd": 43,
-	"./gd.js": 43,
-	"./gl": 44,
-	"./gl.js": 44,
-	"./gom-latn": 45,
-	"./gom-latn.js": 45,
-	"./he": 46,
-	"./he.js": 46,
-	"./hi": 47,
-	"./hi.js": 47,
-	"./hr": 48,
-	"./hr.js": 48,
-	"./hu": 49,
-	"./hu.js": 49,
-	"./hy-am": 50,
-	"./hy-am.js": 50,
-	"./id": 51,
-	"./id.js": 51,
-	"./is": 52,
-	"./is.js": 52,
-	"./it": 53,
-	"./it.js": 53,
-	"./ja": 54,
-	"./ja.js": 54,
-	"./jv": 55,
-	"./jv.js": 55,
-	"./ka": 56,
-	"./ka.js": 56,
-	"./kk": 57,
-	"./kk.js": 57,
-	"./km": 58,
-	"./km.js": 58,
-	"./kn": 59,
-	"./kn.js": 59,
-	"./ko": 60,
-	"./ko.js": 60,
-	"./ky": 61,
-	"./ky.js": 61,
-	"./lb": 62,
-	"./lb.js": 62,
-	"./lo": 63,
-	"./lo.js": 63,
-	"./lt": 64,
-	"./lt.js": 64,
-	"./lv": 65,
-	"./lv.js": 65,
-	"./me": 66,
-	"./me.js": 66,
-	"./mi": 67,
-	"./mi.js": 67,
-	"./mk": 68,
-	"./mk.js": 68,
-	"./ml": 69,
-	"./ml.js": 69,
-	"./mr": 70,
-	"./mr.js": 70,
-	"./ms": 71,
-	"./ms-my": 72,
-	"./ms-my.js": 72,
-	"./ms.js": 71,
-	"./my": 73,
-	"./my.js": 73,
-	"./nb": 74,
-	"./nb.js": 74,
-	"./ne": 75,
-	"./ne.js": 75,
-	"./nl": 76,
-	"./nl-be": 77,
-	"./nl-be.js": 77,
-	"./nl.js": 76,
-	"./nn": 78,
-	"./nn.js": 78,
-	"./pa-in": 79,
-	"./pa-in.js": 79,
-	"./pl": 80,
-	"./pl.js": 80,
-	"./pt": 81,
-	"./pt-br": 82,
-	"./pt-br.js": 82,
-	"./pt.js": 81,
-	"./ro": 83,
-	"./ro.js": 83,
-	"./ru": 84,
-	"./ru.js": 84,
-	"./sd": 85,
-	"./sd.js": 85,
-	"./se": 86,
-	"./se.js": 86,
-	"./si": 87,
-	"./si.js": 87,
-	"./sk": 88,
-	"./sk.js": 88,
-	"./sl": 89,
-	"./sl.js": 89,
-	"./sq": 90,
-	"./sq.js": 90,
-	"./sr": 91,
-	"./sr-cyrl": 92,
-	"./sr-cyrl.js": 92,
-	"./sr.js": 91,
-	"./ss": 93,
-	"./ss.js": 93,
-	"./sv": 94,
-	"./sv.js": 94,
-	"./sw": 95,
-	"./sw.js": 95,
-	"./ta": 96,
-	"./ta.js": 96,
-	"./te": 97,
-	"./te.js": 97,
-	"./tet": 98,
-	"./tet.js": 98,
-	"./th": 99,
-	"./th.js": 99,
-	"./tl-ph": 100,
-	"./tl-ph.js": 100,
-	"./tlh": 101,
-	"./tlh.js": 101,
-	"./tr": 102,
-	"./tr.js": 102,
-	"./tzl": 103,
-	"./tzl.js": 103,
-	"./tzm": 104,
-	"./tzm-latn": 105,
-	"./tzm-latn.js": 105,
-	"./tzm.js": 104,
-	"./uk": 106,
-	"./uk.js": 106,
-	"./ur": 107,
-	"./ur.js": 107,
-	"./uz": 108,
-	"./uz-latn": 109,
-	"./uz-latn.js": 109,
-	"./uz.js": 108,
-	"./vi": 110,
-	"./vi.js": 110,
-	"./x-pseudo": 111,
-	"./x-pseudo.js": 111,
-	"./yo": 112,
-	"./yo.js": 112,
-	"./zh-cn": 113,
-	"./zh-cn.js": 113,
-	"./zh-hk": 114,
-	"./zh-hk.js": 114,
-	"./zh-tw": 115,
-	"./zh-tw.js": 115
+	"./af": 2,
+	"./af.js": 2,
+	"./ar": 3,
+	"./ar-dz": 4,
+	"./ar-dz.js": 4,
+	"./ar-kw": 5,
+	"./ar-kw.js": 5,
+	"./ar-ly": 6,
+	"./ar-ly.js": 6,
+	"./ar-ma": 7,
+	"./ar-ma.js": 7,
+	"./ar-sa": 8,
+	"./ar-sa.js": 8,
+	"./ar-tn": 9,
+	"./ar-tn.js": 9,
+	"./ar.js": 3,
+	"./az": 10,
+	"./az.js": 10,
+	"./be": 11,
+	"./be.js": 11,
+	"./bg": 12,
+	"./bg.js": 12,
+	"./bn": 13,
+	"./bn.js": 13,
+	"./bo": 14,
+	"./bo.js": 14,
+	"./br": 15,
+	"./br.js": 15,
+	"./bs": 16,
+	"./bs.js": 16,
+	"./ca": 17,
+	"./ca.js": 17,
+	"./cs": 18,
+	"./cs.js": 18,
+	"./cv": 19,
+	"./cv.js": 19,
+	"./cy": 20,
+	"./cy.js": 20,
+	"./da": 21,
+	"./da.js": 21,
+	"./de": 22,
+	"./de-at": 23,
+	"./de-at.js": 23,
+	"./de-ch": 24,
+	"./de-ch.js": 24,
+	"./de.js": 22,
+	"./dv": 25,
+	"./dv.js": 25,
+	"./el": 26,
+	"./el.js": 26,
+	"./en-au": 27,
+	"./en-au.js": 27,
+	"./en-ca": 28,
+	"./en-ca.js": 28,
+	"./en-gb": 29,
+	"./en-gb.js": 29,
+	"./en-ie": 30,
+	"./en-ie.js": 30,
+	"./en-nz": 31,
+	"./en-nz.js": 31,
+	"./eo": 32,
+	"./eo.js": 32,
+	"./es": 33,
+	"./es-do": 34,
+	"./es-do.js": 34,
+	"./es.js": 33,
+	"./et": 35,
+	"./et.js": 35,
+	"./eu": 36,
+	"./eu.js": 36,
+	"./fa": 37,
+	"./fa.js": 37,
+	"./fi": 38,
+	"./fi.js": 38,
+	"./fo": 39,
+	"./fo.js": 39,
+	"./fr": 40,
+	"./fr-ca": 41,
+	"./fr-ca.js": 41,
+	"./fr-ch": 42,
+	"./fr-ch.js": 42,
+	"./fr.js": 40,
+	"./fy": 43,
+	"./fy.js": 43,
+	"./gd": 44,
+	"./gd.js": 44,
+	"./gl": 45,
+	"./gl.js": 45,
+	"./gom-latn": 46,
+	"./gom-latn.js": 46,
+	"./he": 47,
+	"./he.js": 47,
+	"./hi": 48,
+	"./hi.js": 48,
+	"./hr": 49,
+	"./hr.js": 49,
+	"./hu": 50,
+	"./hu.js": 50,
+	"./hy-am": 51,
+	"./hy-am.js": 51,
+	"./id": 52,
+	"./id.js": 52,
+	"./is": 53,
+	"./is.js": 53,
+	"./it": 54,
+	"./it.js": 54,
+	"./ja": 55,
+	"./ja.js": 55,
+	"./jv": 56,
+	"./jv.js": 56,
+	"./ka": 57,
+	"./ka.js": 57,
+	"./kk": 58,
+	"./kk.js": 58,
+	"./km": 59,
+	"./km.js": 59,
+	"./kn": 60,
+	"./kn.js": 60,
+	"./ko": 61,
+	"./ko.js": 61,
+	"./ky": 62,
+	"./ky.js": 62,
+	"./lb": 63,
+	"./lb.js": 63,
+	"./lo": 64,
+	"./lo.js": 64,
+	"./lt": 65,
+	"./lt.js": 65,
+	"./lv": 66,
+	"./lv.js": 66,
+	"./me": 67,
+	"./me.js": 67,
+	"./mi": 68,
+	"./mi.js": 68,
+	"./mk": 69,
+	"./mk.js": 69,
+	"./ml": 70,
+	"./ml.js": 70,
+	"./mr": 71,
+	"./mr.js": 71,
+	"./ms": 72,
+	"./ms-my": 73,
+	"./ms-my.js": 73,
+	"./ms.js": 72,
+	"./my": 74,
+	"./my.js": 74,
+	"./nb": 75,
+	"./nb.js": 75,
+	"./ne": 76,
+	"./ne.js": 76,
+	"./nl": 77,
+	"./nl-be": 78,
+	"./nl-be.js": 78,
+	"./nl.js": 77,
+	"./nn": 79,
+	"./nn.js": 79,
+	"./pa-in": 80,
+	"./pa-in.js": 80,
+	"./pl": 81,
+	"./pl.js": 81,
+	"./pt": 82,
+	"./pt-br": 83,
+	"./pt-br.js": 83,
+	"./pt.js": 82,
+	"./ro": 84,
+	"./ro.js": 84,
+	"./ru": 85,
+	"./ru.js": 85,
+	"./sd": 86,
+	"./sd.js": 86,
+	"./se": 87,
+	"./se.js": 87,
+	"./si": 88,
+	"./si.js": 88,
+	"./sk": 89,
+	"./sk.js": 89,
+	"./sl": 90,
+	"./sl.js": 90,
+	"./sq": 91,
+	"./sq.js": 91,
+	"./sr": 92,
+	"./sr-cyrl": 93,
+	"./sr-cyrl.js": 93,
+	"./sr.js": 92,
+	"./ss": 94,
+	"./ss.js": 94,
+	"./sv": 95,
+	"./sv.js": 95,
+	"./sw": 96,
+	"./sw.js": 96,
+	"./ta": 97,
+	"./ta.js": 97,
+	"./te": 98,
+	"./te.js": 98,
+	"./tet": 99,
+	"./tet.js": 99,
+	"./th": 100,
+	"./th.js": 100,
+	"./tl-ph": 101,
+	"./tl-ph.js": 101,
+	"./tlh": 102,
+	"./tlh.js": 102,
+	"./tr": 103,
+	"./tr.js": 103,
+	"./tzl": 104,
+	"./tzl.js": 104,
+	"./tzm": 105,
+	"./tzm-latn": 106,
+	"./tzm-latn.js": 106,
+	"./tzm.js": 105,
+	"./uk": 107,
+	"./uk.js": 107,
+	"./ur": 108,
+	"./ur.js": 108,
+	"./uz": 109,
+	"./uz-latn": 110,
+	"./uz-latn.js": 110,
+	"./uz.js": 109,
+	"./vi": 111,
+	"./vi.js": 111,
+	"./x-pseudo": 112,
+	"./x-pseudo.js": 112,
+	"./yo": 113,
+	"./yo.js": 113,
+	"./zh-cn": 114,
+	"./zh-cn.js": 114,
+	"./zh-hk": 115,
+	"./zh-hk.js": 115,
+	"./zh-tw": 116,
+	"./zh-tw.js": 116
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -16899,181 +16985,148 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 119;
-
-/***/ }),
-/* 120 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const {
-    isArray
-} = __webpack_require__(116)
-
-const renderDayName = function(opts, day, abbr)
-{
-    day += opts.firstDay;
-    while (day >= 7) {
-        day -= 7;
-    }
-    return abbr ? opts.i18n.weekdaysShort[day] : opts.i18n.weekdays[day];
-}
-
-const renderDay = function(opts)
-{
-    var arr = [];
-    var ariaSelected = 'false';
-    if (opts.isEmpty) {
-        if (opts.showDaysInNextAndPreviousMonths) {
-            arr.push('is-outside-current-month');
-
-            if(!opts.enableSelectionDaysInNextAndPreviousMonths) {
-                arr.push('is-selection-disabled');
-            }
-
-        } else {
-            return '<td class="is-empty"></td>';
-        }
-    }
-    if (opts.isDisabled) {
-        arr.push('is-disabled');
-    }
-    if (opts.isToday) {
-        arr.push('is-today');
-    }
-    if (opts.isSelected) {
-        arr.push('is-selected');
-        ariaSelected = 'true';
-    }
-    if (opts.hasEvent) {
-        arr.push('has-event');
-    }
-    if (opts.isInRange) {
-        arr.push('is-inrange');
-    }
-    if (opts.isStartRange) {
-        arr.push('is-startrange');
-    }
-    if (opts.isEndRange) {
-        arr.push('is-endrange');
-    }
-    return '<td data-day="' + opts.day + '" class="' + arr.join(' ') + '" aria-selected="' + ariaSelected + '">' +
-             '<button class="pika-button pika-day" type="button" ' +
-                'data-pika-year="' + opts.year + '" data-pika-month="' + opts.month + '" data-pika-day="' + opts.day + '">' +
-                    opts.day +
-             '</button>' +
-           '</td>';
-}
-
-const renderWeek = function (d, m, y) {
-    // Lifted from http://javascript.about.com/library/blweekyear.htm, lightly modified.
-    var onejan = new Date(y, 0, 1),
-        weekNum = Math.ceil((((new Date(y, m, d) - onejan) / 86400000) + onejan.getDay()+1)/7);
-    return '<td class="pika-week">' + weekNum + '</td>';
-}
-
-const renderRow = function(days, isRTL, pickWholeWeek, isRowSelected)
-{
-    return '<tr class="pika-row' + (pickWholeWeek ? ' pick-whole-week' : '') + (isRowSelected ? ' is-selected' : '') + '">' + (isRTL ? days.reverse() : days).join('') + '</tr>';
-}
-
-const renderBody = function(rows)
-{
-    return '<tbody>' + rows.join('') + '</tbody>';
-}
-
-const renderHead = function(opts)
-{
-    var i, arr = [];
-    if (opts.showWeekNumber) {
-        arr.push('<th></th>');
-    }
-    for (i = 0; i < 7; i++) {
-        arr.push('<th scope="col"><abbr title="' + renderDayName(opts, i) + '">' + renderDayName(opts, i, true) + '</abbr></th>');
-    }
-    return '<thead><tr>' + (opts.isRTL ? arr.reverse() : arr).join('') + '</tr></thead>';
-}
-
-const renderTitle = function(instance, c, year, month, refYear, randId)
-{
-    var i, j, arr,
-        opts = instance._o,
-        isMinYear = year === opts.minYear,
-        isMaxYear = year === opts.maxYear,
-        html = '<div id="' + randId + '" class="pika-title" role="heading" aria-live="assertive">',
-        monthHtml,
-        yearHtml,
-        prev = true,
-        next = true;
-
-    for (arr = [], i = 0; i < 12; i++) {
-        arr.push('<option value="' + (year === refYear ? i - c : 12 + i - c) + '"' +
-            (i === month ? ' selected="selected"': '') +
-            ((isMinYear && i < opts.minMonth) || (isMaxYear && i > opts.maxMonth) ? 'disabled="disabled"' : '') + '>' +
-            opts.i18n.months[i] + '</option>');
-    }
-
-    monthHtml = '<div class="pika-label">' + opts.i18n.months[month] + '<select class="pika-select pika-select-month" tabindex="-1">' + arr.join('') + '</select></div>';
-
-    if (isArray(opts.yearRange)) {
-        i = opts.yearRange[0];
-        j = opts.yearRange[1] + 1;
-    } else {
-        i = year - opts.yearRange;
-        j = 1 + year + opts.yearRange;
-    }
-
-    for (arr = []; i < j && i <= opts.maxYear; i++) {
-        if (i >= opts.minYear) {
-            arr.push('<option value="' + i + '"' + (i === year ? ' selected="selected"': '') + '>' + (i) + '</option>');
-        }
-    }
-    yearHtml = '<div class="pika-label">' + year + opts.yearSuffix + '<select class="pika-select pika-select-year" tabindex="-1">' + arr.join('') + '</select></div>';
-
-    if (opts.showMonthAfterYear) {
-        html += yearHtml + monthHtml;
-    } else {
-        html += monthHtml + yearHtml;
-    }
-
-    if (isMinYear && (month === 0 || opts.minMonth >= month)) {
-        prev = false;
-    }
-
-    if (isMaxYear && (month === 11 || opts.maxMonth <= month)) {
-        next = false;
-    }
-
-    if (c === 0) {
-        html += '<button class="pika-prev' + (prev ? '' : ' is-disabled') + '" type="button">' + opts.i18n.previousMonth + '</button>';
-    }
-    if (c === (instance._o.numberOfMonths - 1) ) {
-        html += '<button class="pika-next' + (next ? '' : ' is-disabled') + '" type="button">' + opts.i18n.nextMonth + '</button>';
-    }
-
-    return html += '</div>';
-}
-
-const renderTable = function(opts, data, randId)
-{
-    return '<table cellpadding="0" cellspacing="0" class="pika-table" role="grid" aria-labelledby="' + randId + '">' + renderHead(opts) + renderBody(data) + '</table>';
-}
-
-module.exports = {
-    renderDayName,
-    renderDay,
-    renderWeek,
-    renderRow,
-    renderBody,
-    renderHead,
-    renderTitle,
-    renderTable
-}
+webpackContext.id = 120;
 
 /***/ }),
 /* 121 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const {
+    isDate,
+    isWeekend,
+    getDaysInMonth,
+    setToStartOfDay,
+    compareDates
+} = __webpack_require__(1)
+
+const {
+    renderDay,
+    renderWeek,
+    renderRow,
+    renderTable
+} = __webpack_require__(117)
+
+const renderDays = function (year, month, randId, opts) {
+    var now    = new Date(),
+        days   = getDaysInMonth(year, month),
+        before = new Date(year, month, 1).getDay(),
+        data   = [],
+        row    = [];
+
+    setToStartOfDay(now);
+    if (opts.firstDay > 0) {
+        before -= opts.firstDay;
+        if (before < 0) {
+            before += 7;
+        }
+    }
+    var previousMonth = month === 0 ? 11 : month - 1,
+        nextMonth = month === 11 ? 0 : month + 1,
+        yearOfPreviousMonth = month === 0 ? year - 1 : year,
+        yearOfNextMonth = month === 11 ? year + 1 : year,
+        daysInPreviousMonth = getDaysInMonth(yearOfPreviousMonth, previousMonth);
+    var cells = days + before,
+        after = cells;
+    while(after > 7) {
+        after -= 7;
+    }
+    cells += 7 - after;
+    var isWeekSelected = false;
+    for (var i = 0, r = 0; i < cells; i++)
+    {
+        var day = new Date(year, month, 1 + (i - before)),
+            isSelected = isDate(this._d) ? compareDates(day, this._d) : false,
+            isToday = compareDates(day, now),
+            hasEvent = opts.events.indexOf(day.toDateString()) !== -1 ? true : false,
+            isEmpty = i < before || i >= (days + before),
+            dayNumber = 1 + (i - before),
+            monthNumber = month,
+            yearNumber = year,
+            isStartRange = opts.startRange && compareDates(opts.startRange, day),
+            isEndRange = opts.endRange && compareDates(opts.endRange, day),
+            isInRange = opts.startRange && opts.endRange && opts.startRange < day && day < opts.endRange,
+            isDisabled = (opts.minDate && day < opts.minDate) ||
+                         (opts.maxDate && day > opts.maxDate) ||
+                         (opts.disableWeekends && isWeekend(day)) ||
+                         (opts.disableDayFn && opts.disableDayFn(day));
+
+        if (isEmpty) {
+            if (i < before) {
+                dayNumber = daysInPreviousMonth + dayNumber;
+                monthNumber = previousMonth;
+                yearNumber = yearOfPreviousMonth;
+            } else {
+                dayNumber = dayNumber - days;
+                monthNumber = nextMonth;
+                yearNumber = yearOfNextMonth;
+            }
+        }
+
+        var dayConfig = {
+                day: dayNumber,
+                month: monthNumber,
+                year: yearNumber,
+                hasEvent: hasEvent,
+                isSelected: isSelected,
+                isToday: isToday,
+                isDisabled: isDisabled,
+                isEmpty: isEmpty,
+                isStartRange: isStartRange,
+                isEndRange: isEndRange,
+                isInRange: isInRange,
+                showDaysInNextAndPreviousMonths: opts.showDaysInNextAndPreviousMonths,
+                enableSelectionDaysInNextAndPreviousMonths: opts.enableSelectionDaysInNextAndPreviousMonths
+            };
+
+        if (opts.pickWholeWeek && isSelected) {
+            isWeekSelected = true;
+        }
+
+        row.push(renderDay(dayConfig));
+
+        if (++r === 7) {
+            if (opts.showWeekNumber) {
+                row.unshift(renderWeek(i - before, month, year));
+            }
+            data.push(renderRow(row, opts.isRTL, opts.pickWholeWeek, isWeekSelected));
+            row = [];
+            r = 0;
+            isWeekSelected = false;
+        }
+    }
+    return renderTable(opts, data, randId);
+}
+
+const renderMonths = function () {
+    return ''
+}
+
+const renderYears = function () {
+    return ''
+}
+
+const renderFinancialYears = function () {
+    return ''
+}
+
+module.exports = {
+    renderDays,
+    renderMonths,
+    renderYears,
+    renderFinancialYears
+}
+
+/***/ }),
+/* 122 */
 /***/ (function(module, exports) {
 
 let defaults = {
+
+    // lets the user select a range instead of a single date
+    selectRange: false,
+
+    // lets the user choose between a days / months / years / financialYears view
+    layout: 'days',
 
     // bind the picker to a form field
     field: null,

@@ -18,7 +18,7 @@ const {
     renderTable
 } = require('./renderUtils')
 
-const renderDays = function (year, month, randId, opts) {
+const renderDays = function (currentDate, year, month, randId, opts) {
     var now    = new Date(),
         days   = getDaysInMonth(year, month),
         // gets the first days number from this specific year and month (0..6)
@@ -63,7 +63,7 @@ const renderDays = function (year, month, randId, opts) {
     for (var i = 0, r = 0; i < cells; i++)
     {
         var day = new Date(year, month, 1 + (i - before)),
-            isSelected = isDate(this._d) ? compareDates(day, this._d) : false,
+            isSelected = isDate(currentDate) ? compareDates(day, currentDate) : false,
             isToday = compareDates(day, now),
             hasEvent = opts.events.indexOf(day.toDateString()) !== -1 ? true : false,
             isEmpty = i < before || i >= (days + before),
@@ -125,7 +125,7 @@ const renderDays = function (year, month, randId, opts) {
     return renderTable(opts, data, randId);
 }
 
-const renderMonths = function (year, randId, opts) {
+const renderMonths = function (currentDate, year, randId, opts) {
     const now = new Date();
     const months = 12;
 
@@ -137,7 +137,7 @@ const renderMonths = function (year, randId, opts) {
 
     for (var i = 0, r = 0; i < months; i++) {
         let month = new Date(year, i);
-        let isSelected = isDate(this._d) ? compareMonths(month, this._d) : false;
+        let isSelected = isDate(currentDate) ? compareMonths(month, currentDate) : false;
         let isThisMonth = compareMonths(month, now);
         let isDisabled = (opts.minDate && month < opts.minDate) ||
                          (opts.maxDate && month > opts.maxDate);

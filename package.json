@@ -19,10 +19,14 @@
     "moment": "2.x"
   },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
     "expect.js": "^0.3.1",
     "jshint": "^2.9",
     "mocha": "~1.18.2",
-    "testling": "^1.7"
+    "testling": "^1.7",
+    "uglifyjs-webpack-plugin": "^0.4.6"
   },
   "testling": {
     "harness": "mocha",

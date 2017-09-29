@@ -1,6 +1,6 @@
 'use strict';
 
-const moment = require('moment')
+const moment = require('moment');
 
 const {
     hasEventListeners,
@@ -630,13 +630,13 @@ Pikaday.prototype = {
             let renderedBody = '';
 
             if (layout === 'days') {
-                renderedBody = renderDays(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+                renderedBody = renderDays(this._d, this.calendars[c].year, this.calendars[c].month, randId, this._o)
             } else if (layout === 'months') {
-                renderedBody = renderMonths(this.calendars[c].year, randId, this._o)
+                renderedBody = renderMonths(this._d, this.calendars[c].year, randId, this._o)
             } else if (layout === 'years') {
-                renderedBody = renderYears(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+                renderedBody = renderYears(this._d, this.calendars[c].year, this.calendars[c].month, randId, this._o)
             } else if (layout === 'financialYears') {
-                renderedBody = renderFinancialYears(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+                renderedBody = renderFinancialYears(this._d, this.calendars[c].year, this.calendars[c].month, randId, this._o)
             }
 
             html += '<div class="pika-lendar">' 

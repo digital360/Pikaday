@@ -83,9 +83,9 @@ const compareDates = function(a,b)
     return a.getTime() === b.getTime();
 }
 
-const compareMonths = function(a,b)
+const compareMonths = function(a, b)
 {
-    return a.getMonth() === b.getMonth();
+    return a.getMonth() === b.getMonth() && a.getYear() === b.getYear();
 }
 
 const extend = function(to, from, overwrite)

@@ -122,6 +122,9 @@ let Pikaday = function(options)
         else if (hasClass(target, 'pika-select-year')) {
             self.gotoYear(target.value);
         }
+        else if (hasClass(target, 'pika-select-decade')) {
+            self.gotoDecade(target.value);
+        }
     };
 
     self._onKeyChange = function(e)
@@ -543,6 +546,17 @@ Pikaday.prototype = {
     {
         if (!isNaN(year)) {
             this.calendars[0].year = parseInt(year, 10);
+            this.adjustCalendars();
+        }
+    },
+
+    /**
+     * change view to a specific full decade (e.g. "2010-2019")
+     */
+    gotoDecade: function(decade)
+    {
+        if (!isNaN(decade)) {
+            this.calendars[0].decade = parseInt(decade, 10);
             this.adjustCalendars();
         }
     },

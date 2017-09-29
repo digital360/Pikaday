@@ -14,7 +14,8 @@ const {
     setToStartOfDay,
     extend,
     fireEvent,
-    adjustCalendar
+    adjustCalendar,
+    getDecade
 } = require('./utils')
 
 const {
@@ -64,7 +65,7 @@ let Pikaday = function(options)
                 } else if (opts.layout === 'months') {
                     self.setDate(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), 0));
                 } else if (opts.layout === 'years') {
-                    self.setDate(new Date(target.getAttribute('data-pika-year'), 0, 0));
+                    self.setDate(new Date(target.getAttribute('data-pika-year')));
                 } else if (opts.layout === 'financialYears') {
                     self.setDate(new Date(target.getAttribute('data-pika-year'), 0, 0));
                 } else {
@@ -456,7 +457,8 @@ Pikaday.prototype = {
         if (newCalendar) {
             this.calendars = [{
                 month: date.getMonth(),
-                year: date.getFullYear()
+                year: date.getFullYear(),
+                decade: getDecade(date)
             }];
             if (this._o.mainCalendar === 'right') {
                 this.calendars[0].month += 1 - this._o.numberOfMonths;
@@ -487,7 +489,8 @@ Pikaday.prototype = {
         for (var c = 1; c < this._o.numberOfMonths; c++) {
             this.calendars[c] = adjustCalendar({
                 month: this.calendars[0].month + c,
-                year: this.calendars[0].year
+                year: this.calendars[0].year,
+                decade: getDecade(this.calendars[0].year)
             });
         }
         this.draw();
@@ -634,7 +637,7 @@ Pikaday.prototype = {
             } else if (layout === 'months') {
                 renderedBody = renderMonths(this._d, this.calendars[c].year, randId, this._o)
             } else if (layout === 'years') {
-                renderedBody = renderYears(this._d, this.calendars[c].year, this.calendars[c].month, randId, this._o)
+                renderedBody = renderYears(this._d, this.calendars[c].decade, randId, this._o)
             } else if (layout === 'financialYears') {
                 renderedBody = renderFinancialYears(this._d, this.calendars[c].year, this.calendars[c].month, randId, this._o)
             }

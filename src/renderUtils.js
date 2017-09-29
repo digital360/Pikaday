@@ -82,8 +82,33 @@ const renderMonth = function (opts) {
             </td>`;
 }
 
-const renderYear = function () {
-    return '';
+const renderYear = function (opts) {
+    let classArray = [];
+    let ariaSelected = false;
+
+    if (opts.isEmpty) {
+        return '<td class="is-empty"></td>';
+    }
+
+    if (opts.isSelected) {
+        classArray.push('is-selected');
+        ariaSelected = true;
+    }
+
+    if (opts.isThisYear) {
+        classArray.push('is-current-year');
+    }
+
+    if (opts.isDisabled) {
+        classArray.push('is-disabled');
+    }
+
+    return `<td data-year="${opts.year}" class="${classArray.join(' ')}" aria-selected="${ariaSelected}">
+                <button class="pika-button pika-year" type="button" 
+                data-pika-year="${opts.year}">
+                ${opts.year}
+                </button>
+            </td>`;
 }
 
 const renderFinancialYear = function () {
@@ -97,9 +122,9 @@ const renderWeek = function (d, m, y) {
     return '<td class="pika-week">' + weekNum + '</td>';
 }
 
-const renderRow = function(days, isRTL = false, pickWholeWeek = false, isRowSelected = false)
+const renderRow = function(items, isRTL = false, pickWholeWeek = false, isRowSelected = false)
 {
-    return '<tr class="pika-row' + (pickWholeWeek ? ' pick-whole-week' : '') + (isRowSelected ? ' is-selected' : '') + '">' + (isRTL ? days.reverse() : days).join('') + '</tr>';
+    return '<tr class="pika-row' + (pickWholeWeek ? ' pick-whole-week' : '') + (isRowSelected ? ' is-selected' : '') + '">' + (isRTL ? items.reverse() : items).join('') + '</tr>';
 }
 
 const renderBody = function(rows)

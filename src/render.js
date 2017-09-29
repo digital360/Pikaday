@@ -5,7 +5,8 @@ const {
     setToStartOfDay,
     setToStartOfMonth,
     compareDates,
-    compareMonths
+    compareMonths,
+    compareYears
 } = require('./utils')
 
 const {
@@ -165,8 +166,40 @@ const renderMonths = function (currentDate, year, randId, opts) {
     return renderTable(opts, data, randId);
 }
 
-const renderYears = function () {
-    return ''
+const renderYears = function (currentDate, decade, randId, opts) {
+    const now = new Date();
+    const cells = 12
+
+    let data = [];
+    let row = [];
+
+    for (var i = 0, r = 0; i < cells; i++) {
+        let numericYear = decade + i;
+        let year = new Date(numericYear, 0);
+        let isSelected = isDate(currentDate) ? compareYears(year, currentDate) : false;
+        let isThisYear = compareYears(year, now);
+        let isEmpty = numericYear - decade > 9;
+        let isDisabled = (opts.minDate && year < opts.minDate) ||
+                         (opts.maxDate && year > opts.maxDate);
+        
+        let yearConfig = {
+            year: year.getFullYear(),
+            isSelected,
+            isThisYear,
+            isDisabled,
+            isEmpty
+        };
+
+        row.push(renderYear(yearConfig));
+
+        if (++r === 3) {
+            data.push(renderRow(row, opts.isRTL));
+            row = [];
+            r = 0;
+        }
+    }
+
+    return renderTable(opts, data, randId);
 }
 
 const renderFinancialYears = function () {

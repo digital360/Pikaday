@@ -161,7 +161,8 @@
     pointer-events: none;
     cursor: default; }
 
-.pika-month {
+.pika-month,
+.pika-year {
   border: 2px solid white;
   text-align: center; }
 

@@ -88,6 +88,11 @@ const compareMonths = function(a, b)
     return a.getMonth() === b.getMonth() && a.getYear() === b.getYear();
 }
 
+const compareYears = function(a, b)
+{
+    return a.getYear() === b.getYear();
+}
+
 const extend = function(to, from, overwrite)
 {
     var prop, hasProp;
@@ -141,6 +146,12 @@ const adjustCalendar = function(calendar) {
     return calendar;
 }
 
+const getDecade = function (date) {
+    const currentYear = date.getFullYear();
+    const decadeOrigin = currentYear - (currentYear % 10);
+    return decadeOrigin;
+}
+
 module.exports = {
     hasEventListeners,
     addClass,
@@ -157,7 +168,9 @@ module.exports = {
     setToStartOfMonth,
     compareDates,
     compareMonths,
+    compareYears,
     extend,
     fireEvent,
-    adjustCalendar
+    adjustCalendar,
+    getDecade
 }

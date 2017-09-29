@@ -81,10 +81,18 @@ let Pikaday = function(options)
                 }
             }
             else if (hasClass(target, 'pika-prev')) {
-                self.prevMonth();
+                if (opts.layout === 'days') {
+                    self.prevMonth();
+                } else if (opts.layout === 'months') {
+                    self.prevYear();
+                }
             }
             else if (hasClass(target, 'pika-next')) {
-                self.nextMonth();
+                if (opts.layout === 'days') {
+                    self.nextMonth();
+                } else if (opts.layout === 'months') {
+                    self.nextYear();
+                }
             }
         }
         if (!hasClass(target, 'pika-select')) {
@@ -510,6 +518,18 @@ Pikaday.prototype = {
     prevMonth: function()
     {
         this.calendars[0].month--;
+        this.adjustCalendars();
+    },
+
+    nextYear: function()
+    {
+        this.calendars[0].year++;
+        this.adjustCalendars();
+    },
+
+    prevYear: function()
+    {
+        this.calendars[0].year--;
         this.adjustCalendars();
     },
 

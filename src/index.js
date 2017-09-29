@@ -57,7 +57,20 @@ let Pikaday = function(options)
 
         if (!hasClass(target, 'is-disabled')) {
             if (hasClass(target, 'pika-button') && !hasClass(target, 'is-empty') && !hasClass(target.parentNode, 'is-disabled')) {
-                self.setDate(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), target.getAttribute('data-pika-day')));
+
+                // We set a different date depending on the chosen layout
+                if (opts.layout === 'days') {
+                    self.setDate(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), target.getAttribute('data-pika-day')));
+                } else if (opts.layout === 'months') {
+                    self.setDate(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), 0));
+                } else if (opts.layout === 'years') {
+                    self.setDate(new Date(target.getAttribute('data-pika-year'), 0, 0));
+                } else if (opts.layout === 'financialYears') {
+                    self.setDate(new Date(target.getAttribute('data-pika-year'), 0, 0));
+                } else {
+                    self.setDate(new Date());
+                }
+
                 if (opts.bound) {
                     sto(function() {
                         self.hide();

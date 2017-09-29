@@ -52,6 +52,9 @@ let defaults = {
     // number of years either side, or array of upper/lower range
     yearRange: 10,
 
+    // number of decades either side, or array of upper/lower range
+    decadeRange: 4,
+
     // show week numbers at head of row
     showWeekNumber: false,
 

@@ -643,7 +643,7 @@ Pikaday.prototype = {
             }
 
             html += '<div class="pika-lendar">' 
-                + renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) 
+                + renderTitle(this, c, this.calendars[c].decade, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) 
                 + renderedBody
                 + '</div>';
         }

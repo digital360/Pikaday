@@ -1,5 +1,6 @@
 const {
-    isArray
+    isArray,
+    getDecade
 } = require('./utils')
 
 const renderDayName = function(opts, day, abbr)
@@ -146,7 +147,7 @@ const renderHead = function(opts)
     return '<thead><tr>' + (opts.isRTL ? arr.reverse() : arr).join('') + '</tr></thead>';
 }
 
-const renderTitle = function(instance, c, year, month, refYear, randId)
+const renderTitle = function(instance, c, decade, year, month, refYear, randId)
 {
     var i, j, arr,
         opts = instance._o,
@@ -155,6 +156,7 @@ const renderTitle = function(instance, c, year, month, refYear, randId)
         html = '<div id="' + randId + '" class="pika-title" role="heading" aria-live="assertive">',
         monthHtml,
         yearHtml,
+        decadeHtml,
         prev = true,
         next = true;
 
@@ -182,12 +184,32 @@ const renderTitle = function(instance, c, year, month, refYear, randId)
             arr.push('<option value="' + i + '"' + (i === year ? ' selected="selected"': '') + '>' + (i) + '</option>');
         }
     }
-    yearHtml = '<div class="pika-label">' + year + opts.yearSuffix + '<select class="pika-select pika-select-year" tabindex="-1">' + arr.join('') + '</select></div>';
+
+    yearHtml = opts.layout === 'days' || opts.layout === 'months'
+        ? `<div class="pika-label">${year + opts.yearSuffix}<select class="pika-select pika-select-year" tabindex="-1">${arr.join('')}</select></div>`
+        : '';
+
+    if (isArray(opts.decadeRange)) {
+        i = opts.decadeRange[0];
+        j = opts.decadeRange[1] + 1;
+    } else {
+        i = decade - (opts.decadeRange * 10);
+        j = decade + (opts.decadeRange * 10);
+    }
+
+    // Calculate decades to display
+    for (arr = []; i <= j; i = i + 10) {
+        arr.push(`<option value="${i}"${i === decade ? ' selected="selected"': ''}>${i} - ${i + 9}</option>`);
+    }
+
+    decadeHtml = opts.layout === 'years' || opts.layout === 'financialYears'
+        ? `<div class="pika-label">${decade} - ${decade + 9}<select class="pika-select pika-select-decade" tabindex="-1">${arr.join('')}</select></div>`
+        : '';
 
     if (opts.showMonthAfterYear) {
-        html += yearHtml + monthHtml;
+        html += decadeHtml + yearHtml + monthHtml;
     } else {
-        html += monthHtml + yearHtml;
+        html += monthHtml + yearHtml + decadeHtml;
     }
 
     if (isMinYear && (month === 0 || opts.minMonth >= month)) {

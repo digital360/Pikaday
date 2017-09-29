@@ -140,6 +140,7 @@ The user needs to change the `format` option to reflect that.
 * `disableWeekends` disallow selection of Saturdays or Sundays
 * `disableDayFn` callback function that gets passed a Date object for each day in view. Should return true to disable selection of that day.
 * `yearRange` number of years either side (e.g. `10`) or array of upper/lower range (e.g. `[1900,2015]`)
+* `decadeRange` number of decades either side (e.g. `4`) or array of upper/lower range in multiples of 10 (decades) (e.g. `[1980,2010]`)
 * `showWeekNumber` show the ISO week number at the head of the row (default `false`)
 * `pickWholeWeek` select a whole week instead of a day (default `false`)
 * `isRTL` reverse the calendar for right-to-left languages

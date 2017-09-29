@@ -187,7 +187,8 @@ const renderYears = function (currentDate, decade, randId, opts) {
             isSelected,
             isThisYear,
             isDisabled,
-            isEmpty
+            isEmpty,
+            isFinancialYear: opts.layout === 'financialYears'
         };
 
         row.push(renderYear(yearConfig));

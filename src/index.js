@@ -25,8 +25,7 @@ const {
 const {
     renderDays,
     renderMonths,
-    renderYears,
-    renderFinancialYears
+    renderYears
 } = require('./render')
 
 let defaults = require('./defaults')
@@ -64,10 +63,8 @@ let Pikaday = function(options)
                     self.setDate(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), target.getAttribute('data-pika-day')));
                 } else if (opts.layout === 'months') {
                     self.setDate(new Date(target.getAttribute('data-pika-year'), target.getAttribute('data-pika-month'), 0));
-                } else if (opts.layout === 'years') {
+                } else if (opts.layout === 'years' || opts.layout === 'financialYears') {
                     self.setDate(new Date(target.getAttribute('data-pika-year')));
-                } else if (opts.layout === 'financialYears') {
-                    self.setDate(new Date(target.getAttribute('data-pika-year'), 0, 0));
                 } else {
                     self.setDate(new Date());
                 }
@@ -650,10 +647,8 @@ Pikaday.prototype = {
                 renderedBody = renderDays(this._d, this.calendars[c].year, this.calendars[c].month, randId, this._o)
             } else if (layout === 'months') {
                 renderedBody = renderMonths(this._d, this.calendars[c].year, randId, this._o)
-            } else if (layout === 'years') {
+            } else if (layout === 'years' || layout === 'financialYears') {
                 renderedBody = renderYears(this._d, this.calendars[c].decade, randId, this._o)
-            } else if (layout === 'financialYears') {
-                renderedBody = renderFinancialYears(this._d, this.calendars[c].year, this.calendars[c].month, randId, this._o)
             }
 
             html += '<div class="pika-lendar">' 

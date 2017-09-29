@@ -86,6 +86,13 @@ const renderMonth = function (opts) {
 const renderYear = function (opts) {
     let classArray = [];
     let ariaSelected = false;
+    let nextYear = parseInt(opts.year, 10) + 1;
+    let formattedNextYear = nextYear.toString().substring(2);
+    let yearLabel = opts.isFinancialYear
+        ? `${opts.year}/${formattedNextYear}`
+        : opts.year
+
+    console.log();
 
     if (opts.isEmpty) {
         return '<td class="is-empty"></td>';
@@ -107,13 +114,9 @@ const renderYear = function (opts) {
     return `<td data-year="${opts.year}" class="${classArray.join(' ')}" aria-selected="${ariaSelected}">
                 <button class="pika-button pika-year" type="button" 
                 data-pika-year="${opts.year}">
-                ${opts.year}
+                ${yearLabel}
                 </button>
             </td>`;
-}
-
-const renderFinancialYear = function () {
-    return '';
 }
 
 const renderWeek = function (d, m, y) {
@@ -241,7 +244,6 @@ module.exports = {
     renderWeek,
     renderMonth,
     renderYear,
-    renderFinancialYear,
     renderRow,
     renderBody,
     renderHead,

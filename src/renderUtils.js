@@ -92,8 +92,6 @@ const renderYear = function (opts) {
         ? `${opts.year}/${formattedNextYear}`
         : opts.year
 
-    console.log();
-
     if (opts.isEmpty) {
         return '<td class="is-empty"></td>';
     }

@@ -99,6 +99,7 @@ let defaults = {
         previousMonth : 'Previous Month',
         nextMonth     : 'Next Month',
         months        : ['January','February','March','April','May','June','July','August','September','October','November','December'],
+        monthsShort   : ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec'],
         weekdays      : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
         weekdaysShort : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
     },

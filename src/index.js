@@ -599,7 +599,7 @@ Pikaday.prototype = {
             if (layout === 'days') {
                 renderedBody = renderDays(this.calendars[c].year, this.calendars[c].month, randId, this._o)
             } else if (layout === 'months') {
-                renderedBody = renderMonths(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+                renderedBody = renderMonths(this.calendars[c].year, randId, this._o)
             } else if (layout === 'years') {
                 renderedBody = renderYears(this.calendars[c].year, this.calendars[c].month, randId, this._o)
             } else if (layout === 'financialYears') {

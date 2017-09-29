@@ -57,6 +57,34 @@ const renderDay = function(opts)
            '</td>';
 }
 
+const renderMonth = function (config) {
+    let classArray = [];
+    let ariaSelected = false;
+
+    if (config.isSelected) {
+        classArray.push('is-selected');
+        ariaSelected = true;
+    }
+
+    if (config.isThisMonth) {
+        classArray.push('is-current-month');
+    }
+    return `<td data-month="${config.month}" class="${classArray.join(' ')}" aria-selected="${ariaSelected}">
+                <button abbr="${config.monthName}" class="pika-button pika-month" type="button" 
+                data-pika-year="${config.year}" data-pika-month="${config.month}">
+                ${config.monthNameShort}
+                </button>
+            </td>`;
+}
+
+const renderYear = function () {
+    return '';
+}
+
+const renderFinancialYear = function () {
+    return '';
+}
+
 const renderWeek = function (d, m, y) {
     // Lifted from http://javascript.about.com/library/blweekyear.htm, lightly modified.
     var onejan = new Date(y, 0, 1),
@@ -64,7 +92,7 @@ const renderWeek = function (d, m, y) {
     return '<td class="pika-week">' + weekNum + '</td>';
 }
 
-const renderRow = function(days, isRTL, pickWholeWeek, isRowSelected)
+const renderRow = function(days, isRTL = false, pickWholeWeek = false, isRowSelected = false)
 {
     return '<tr class="pika-row' + (pickWholeWeek ? ' pick-whole-week' : '') + (isRowSelected ? ' is-selected' : '') + '">' + (isRTL ? days.reverse() : days).join('') + '</tr>';
 }
@@ -80,8 +108,10 @@ const renderHead = function(opts)
     if (opts.showWeekNumber) {
         arr.push('<th></th>');
     }
-    for (i = 0; i < 7; i++) {
-        arr.push('<th scope="col"><abbr title="' + renderDayName(opts, i) + '">' + renderDayName(opts, i, true) + '</abbr></th>');
+    if (opts.layout === 'days') {
+        for (i = 0; i < 7; i++) {
+            arr.push('<th scope="col"><abbr title="' + renderDayName(opts, i) + '">' + renderDayName(opts, i, true) + '</abbr></th>');
+        }
     }
     return '<thead><tr>' + (opts.isRTL ? arr.reverse() : arr).join('') + '</tr></thead>';
 }
@@ -155,6 +185,9 @@ module.exports = {
     renderDayName,
     renderDay,
     renderWeek,
+    renderMonth,
+    renderYear,
+    renderFinancialYear,
     renderRow,
     renderBody,
     renderHead,

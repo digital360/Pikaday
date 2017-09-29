@@ -39,9 +39,11 @@
   "scripts": {
     "test": "testling",
     "lint": "jshint *.js plugins/*.js tests/*.js",
+    "styles": "./node_modules/.bin/node-sass -w ./scss/pikaday.scss ./css/pikaday.css",
     "build": "./node_modules/.bin/webpack --config webpack.config.js"
   },
   "dependencies": {
+    "node-sass": "^4.5.3",
     "webpack": "^3.6.0"
   }
 }

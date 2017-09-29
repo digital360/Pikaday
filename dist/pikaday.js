@@ -4621,10 +4621,20 @@ const setToStartOfDay = function(date)
     if (isDate(date)) date.setHours(0,0,0,0);
 }
 
+const setToStartOfMonth = function(date)
+{
+    if (isDate(date)) date.setDate(0);
+}
+
 const compareDates = function(a,b)
 {
     // weak date comparison (use setToStartOfDay(date) to ensure correct result)
     return a.getTime() === b.getTime();
+}
+
+const compareMonths = function(a,b)
+{
+    return a.getMonth() === b.getMonth();
 }
 
 const extend = function(to, from, overwrite)
@@ -4693,7 +4703,9 @@ module.exports = {
     isLeapYear,
     getDaysInMonth,
     setToStartOfDay,
+    setToStartOfMonth,
     compareDates,
+    compareMonths,
     extend,
     fireEvent,
     adjustCalendar
@@ -15842,6 +15854,34 @@ const renderDay = function(opts)
            '</td>';
 }
 
+const renderMonth = function (config) {
+    let classArray = [];
+    let ariaSelected = false;
+
+    if (config.isSelected) {
+        classArray.push('is-selected');
+        ariaSelected = true;
+    }
+
+    if (config.isThisMonth) {
+        classArray.push('is-current-month');
+    }
+    return `<td data-month="${config.month}" class="${classArray.join(' ')}" aria-selected="${ariaSelected}">
+                <button abbr="${config.monthName}" class="pika-button pika-month" type="button" 
+                data-pika-year="${config.year}" data-pika-month="${config.month}">
+                ${config.monthNameShort}
+                </button>
+            </td>`;
+}
+
+const renderYear = function () {
+    return '';
+}
+
+const renderFinancialYear = function () {
+    return '';
+}
+
 const renderWeek = function (d, m, y) {
     // Lifted from http://javascript.about.com/library/blweekyear.htm, lightly modified.
     var onejan = new Date(y, 0, 1),
@@ -15849,7 +15889,7 @@ const renderWeek = function (d, m, y) {
     return '<td class="pika-week">' + weekNum + '</td>';
 }
 
-const renderRow = function(days, isRTL, pickWholeWeek, isRowSelected)
+const renderRow = function(days, isRTL = false, pickWholeWeek = false, isRowSelected = false)
 {
     return '<tr class="pika-row' + (pickWholeWeek ? ' pick-whole-week' : '') + (isRowSelected ? ' is-selected' : '') + '">' + (isRTL ? days.reverse() : days).join('') + '</tr>';
 }
@@ -15865,8 +15905,10 @@ const renderHead = function(opts)
     if (opts.showWeekNumber) {
         arr.push('<th></th>');
     }
-    for (i = 0; i < 7; i++) {
-        arr.push('<th scope="col"><abbr title="' + renderDayName(opts, i) + '">' + renderDayName(opts, i, true) + '</abbr></th>');
+    if (opts.layout === 'days') {
+        for (i = 0; i < 7; i++) {
+            arr.push('<th scope="col"><abbr title="' + renderDayName(opts, i) + '">' + renderDayName(opts, i, true) + '</abbr></th>');
+        }
     }
     return '<thead><tr>' + (opts.isRTL ? arr.reverse() : arr).join('') + '</tr></thead>';
 }
@@ -15940,6 +15982,9 @@ module.exports = {
     renderDayName,
     renderDay,
     renderWeek,
+    renderMonth,
+    renderYear,
+    renderFinancialYear,
     renderRow,
     renderBody,
     renderHead,
@@ -16553,7 +16598,7 @@ Pikaday.prototype = {
             if (layout === 'days') {
                 renderedBody = renderDays(this.calendars[c].year, this.calendars[c].month, randId, this._o)
             } else if (layout === 'months') {
-                renderedBody = renderMonths(this.calendars[c].year, this.calendars[c].month, randId, this._o)
+                renderedBody = renderMonths(this.calendars[c].year, randId, this._o)
             } else if (layout === 'years') {
                 renderedBody = renderYears(this.calendars[c].year, this.calendars[c].month, randId, this._o)
             } else if (layout === 'financialYears') {
@@ -16996,12 +17041,17 @@ const {
     isWeekend,
     getDaysInMonth,
     setToStartOfDay,
-    compareDates
+    setToStartOfMonth,
+    compareDates,
+    compareMonths
 } = __webpack_require__(1)
 
 const {
     renderDay,
     renderWeek,
+    renderMonth,
+    renderYear,
+    renderFinancialYear,
     renderRow,
     renderTable
 } = __webpack_require__(117)
@@ -17009,13 +17059,19 @@ const {
 const renderDays = function (year, month, randId, opts) {
     var now    = new Date(),
         days   = getDaysInMonth(year, month),
+        // gets the first days number from this specific year and month (0..6)
+        // Used to calculate the spaces before the days start getting painted
         before = new Date(year, month, 1).getDay(),
         data   = [],
         row    = [];
 
     setToStartOfDay(now);
     if (opts.firstDay > 0) {
+        // If we select a day other than Monday (0) to be the first day of the
+        // week, we should sustract this to before.
         before -= opts.firstDay;
+
+        // if after the operation before is smaller than 0, we add another week
         if (before < 0) {
             before += 7;
         }
@@ -17025,13 +17081,23 @@ const renderDays = function (year, month, randId, opts) {
         yearOfPreviousMonth = month === 0 ? year - 1 : year,
         yearOfNextMonth = month === 11 ? year + 1 : year,
         daysInPreviousMonth = getDaysInMonth(yearOfPreviousMonth, previousMonth);
+
+    // This is the minimum number of cells we need to draw (number of days in
+    // the current month plus the before days).
     var cells = days + before,
-        after = cells;
-    while(after > 7) {
-        after -= 7;
-    }
+        // the number of extra cells we need to draw is the total of cells
+        // we already have module 7.
+        after = cells % 7;
+
+    // while(after > 7) {
+    //     after -= 7;
+    // }
+
+    // Total of cells we need to draw (hopefully multiple of 7)
     cells += 7 - after;
     var isWeekSelected = false;
+
+    // For each day we need to draw
     for (var i = 0, r = 0; i < cells; i++)
     {
         var day = new Date(year, month, 1 + (i - before)),
@@ -17097,8 +17163,41 @@ const renderDays = function (year, month, randId, opts) {
     return renderTable(opts, data, randId);
 }
 
-const renderMonths = function () {
-    return ''
+const renderMonths = function (year, randId, opts) {
+    const now = new Date();
+    const months = 12;
+
+    let data = [];
+    let row = [];
+
+    let previousYear = year - 1;
+    let nextYear = year + 1;
+
+    for (var i = 0, r = 0; i < months; i++) {
+        let month = new Date(year, i);
+        let isSelected = isDate(this._d) ? compareMonths(month, this._d) : false;
+        let isThisMonth = compareMonths(month, now);
+        let monthNumber = now.getMonth();
+        let yearNumber = year;
+        let monthConfig = {
+            month: monthNumber,
+            monthName: opts.i18n.months[i],
+            monthNameShort: opts.i18n.monthsShort[i],
+            year: yearNumber,
+            isSelected: isSelected,
+            isThisMonth: isThisMonth
+        };
+
+        row.push(renderMonth(monthConfig));
+
+        if (++r === 4) {
+            data.push(renderRow(row, opts.isRTL));
+            row = [];
+            r = 0;
+        }
+    }
+
+    return renderTable(opts, data, randId);
 }
 
 const renderYears = function () {
@@ -17221,6 +17320,7 @@ let defaults = {
         previousMonth : 'Previous Month',
         nextMonth     : 'Next Month',
         months        : ['January','February','March','April','May','June','July','August','September','October','November','December'],
+        monthsShort   : ['Jan','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec'],
         weekdays      : ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
         weekdaysShort : ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
     },

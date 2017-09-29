@@ -72,10 +72,20 @@ const setToStartOfDay = function(date)
     if (isDate(date)) date.setHours(0,0,0,0);
 }
 
+const setToStartOfMonth = function(date)
+{
+    if (isDate(date)) date.setDate(0);
+}
+
 const compareDates = function(a,b)
 {
     // weak date comparison (use setToStartOfDay(date) to ensure correct result)
     return a.getTime() === b.getTime();
+}
+
+const compareMonths = function(a,b)
+{
+    return a.getMonth() === b.getMonth();
 }
 
 const extend = function(to, from, overwrite)
@@ -144,7 +154,9 @@ module.exports = {
     isLeapYear,
     getDaysInMonth,
     setToStartOfDay,
+    setToStartOfMonth,
     compareDates,
+    compareMonths,
     extend,
     fireEvent,
     adjustCalendar

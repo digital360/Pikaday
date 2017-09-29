@@ -139,7 +139,7 @@ const renderMonths = function (year, randId, opts) {
         let month = new Date(year, i);
         let isSelected = isDate(this._d) ? compareMonths(month, this._d) : false;
         let isThisMonth = compareMonths(month, now);
-        let monthNumber = now.getMonth();
+        let monthNumber = i;
         let yearNumber = year;
         let monthConfig = {
             month: monthNumber,

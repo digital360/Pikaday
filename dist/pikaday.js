@@ -15932,7 +15932,9 @@ const renderTitle = function(instance, c, year, month, refYear, randId)
             opts.i18n.months[i] + '</option>');
     }
 
-    monthHtml = '<div class="pika-label">' + opts.i18n.months[month] + '<select class="pika-select pika-select-month" tabindex="-1">' + arr.join('') + '</select></div>';
+    monthHtml = opts.layout === 'days'
+        ? `<div class="pika-label">${opts.i18n.months[month]}<select class="pika-select pika-select-month" tabindex="-1">${arr.join('')}</select></div>`
+        : '';
 
     if (isArray(opts.yearRange)) {
         i = opts.yearRange[0];
@@ -17177,7 +17179,7 @@ const renderMonths = function (year, randId, opts) {
         let month = new Date(year, i);
         let isSelected = isDate(this._d) ? compareMonths(month, this._d) : false;
         let isThisMonth = compareMonths(month, now);
-        let monthNumber = now.getMonth();
+        let monthNumber = i;
         let yearNumber = year;
         let monthConfig = {
             month: monthNumber,

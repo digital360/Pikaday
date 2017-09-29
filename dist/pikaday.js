@@ -15854,22 +15854,27 @@ const renderDay = function(opts)
            '</td>';
 }
 
-const renderMonth = function (config) {
+const renderMonth = function (opts) {
     let classArray = [];
     let ariaSelected = false;
 
-    if (config.isSelected) {
+    if (opts.isSelected) {
         classArray.push('is-selected');
         ariaSelected = true;
     }
 
-    if (config.isThisMonth) {
+    if (opts.isThisMonth) {
         classArray.push('is-current-month');
     }
-    return `<td data-month="${config.month}" class="${classArray.join(' ')}" aria-selected="${ariaSelected}">
-                <button abbr="${config.monthName}" class="pika-button pika-month" type="button" 
-                data-pika-year="${config.year}" data-pika-month="${config.month}">
-                ${config.monthNameShort}
+
+    if (opts.isDisabled) {
+        classArray.push('is-disabled');
+    }
+
+    return `<td data-month="${opts.month}" class="${classArray.join(' ')}" aria-selected="${ariaSelected}">
+                <button abbr="${opts.monthName}" class="pika-button pika-month" type="button" 
+                data-pika-year="${opts.year}" data-pika-month="${opts.month}">
+                ${opts.monthNameShort}
                 </button>
             </td>`;
 }
@@ -17212,6 +17217,8 @@ const renderMonths = function (year, randId, opts) {
         let month = new Date(year, i);
         let isSelected = isDate(this._d) ? compareMonths(month, this._d) : false;
         let isThisMonth = compareMonths(month, now);
+        let isDisabled = (opts.minDate && month < opts.minDate) ||
+                         (opts.maxDate && month > opts.maxDate);
         let monthNumber = i + 1;
         let yearNumber = year;
         let monthConfig = {
@@ -17219,8 +17226,9 @@ const renderMonths = function (year, randId, opts) {
             monthName: opts.i18n.months[i],
             monthNameShort: opts.i18n.monthsShort[i],
             year: yearNumber,
-            isSelected: isSelected,
-            isThisMonth: isThisMonth
+            isSelected,
+            isThisMonth,
+            isDisabled
         };
 
         row.push(renderMonth(monthConfig));

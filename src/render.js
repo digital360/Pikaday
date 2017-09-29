@@ -139,6 +139,8 @@ const renderMonths = function (year, randId, opts) {
         let month = new Date(year, i);
         let isSelected = isDate(this._d) ? compareMonths(month, this._d) : false;
         let isThisMonth = compareMonths(month, now);
+        let isDisabled = (opts.minDate && month < opts.minDate) ||
+                         (opts.maxDate && month > opts.maxDate);
         let monthNumber = i + 1;
         let yearNumber = year;
         let monthConfig = {
@@ -146,8 +148,9 @@ const renderMonths = function (year, randId, opts) {
             monthName: opts.i18n.months[i],
             monthNameShort: opts.i18n.monthsShort[i],
             year: yearNumber,
-            isSelected: isSelected,
-            isThisMonth: isThisMonth
+            isSelected,
+            isThisMonth,
+            isDisabled
         };
 
         row.push(renderMonth(monthConfig));

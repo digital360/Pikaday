@@ -25,17 +25,16 @@
 
     <p class="small">Copyright © 2014 <a href="http://dbushell.com/">David Bushell</a> | BSD &amp; MIT license</p>
 
-
-    <script src="pikaday.js"></script>
+    <script src="dist/pikaday.js"></script>
     <script>
 
     var picker = new Pikaday(
     {
         field: document.getElementById('datepicker'),
-        firstDay: 1,
-        minDate: new Date(),
-        maxDate: new Date(2020, 12, 31),
-        yearRange: [2000,2020]
+        format: 'YYYY',
+        yearRange: [2000,2020],
+        decadeRange: [2000,2060],
+        layout: 'financialYears'
     });
 
     </script>

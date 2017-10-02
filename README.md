@@ -122,6 +122,8 @@ Pikaday has many useful options:
 * `field` bind the datepicker to a form field
 * `trigger` use a different element to trigger opening the datepicker, see [trigger example][] (default to `field`)
 * `bound` automatically show/hide the datepicker on `field` focus (default `true` if `field` is set)
+* `layout` can be set to "days", "months", "years" or "financialYears", and it affects whether the user can select days, months, years or financial years in the datepicker.
+The user needs to change the `format` option to reflect that.
 * `ariaLabel` data-attribute on the input field with an aria assistance tekst (only applied when `bound` is set)
 * `position` preferred position of the datepicker relative to the form field, e.g.: `top right`, `bottom right` **Note:** automatic adjustment may occur to avoid datepicker from being displayed outside the viewport, see [positions example][] (default to 'bottom left')
 * `reposition` can be set to false to not reposition datepicker within the viewport, forcing it to take the configured `position` (default: true)
@@ -138,6 +140,7 @@ Pikaday has many useful options:
 * `disableWeekends` disallow selection of Saturdays or Sundays
 * `disableDayFn` callback function that gets passed a Date object for each day in view. Should return true to disable selection of that day.
 * `yearRange` number of years either side (e.g. `10`) or array of upper/lower range (e.g. `[1900,2015]`)
+* `decadeRange` number of decades either side (e.g. `4`) or array of upper/lower range in multiples of 10 (decades) (e.g. `[1980,2010]`)
 * `showWeekNumber` show the ISO week number at the head of the row (default `false`)
 * `pickWholeWeek` select a whole week instead of a day (default `false`)
 * `isRTL` reverse the calendar for right-to-left languages

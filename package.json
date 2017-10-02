@@ -1,6 +1,6 @@
 {
-  "name": "pikaday",
-  "version": "1.6.1",
+  "name": "@digital360/pikaday",
+  "version": "0.0.1",
   "description": "A refreshing JavaScript Datepicker — lightweight, no dependencies, modular CSS",
   "keywords": [
     "datepicker",

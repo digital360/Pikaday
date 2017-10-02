@@ -767,6 +767,11 @@ Pikaday.prototype = {
         }
     },
 
+    setField: function (element) {
+        var opts = this._o;
+        opts.field = (element && element.nodeName) ? element : null;
+    },
+
     /**
      * GAME OVER
      */

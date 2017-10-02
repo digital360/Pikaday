@@ -10,7 +10,7 @@
   "homepage": "http://dbushell.github.io/Pikaday/",
   "bugs": "https://github.com/dbushell/Pikaday/issues",
   "license": "(0BSD OR MIT)",
-  "main": "pikaday.js",
+  "main": "dist/pikaday.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/dbushell/Pikaday.git"

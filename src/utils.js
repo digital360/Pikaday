@@ -147,8 +147,11 @@ const adjustCalendar = function(calendar) {
 }
 
 const getDecade = function (date) {
-    const currentYear = date.getFullYear();
-    const decadeOrigin = currentYear - (currentYear % 10);
+    if (isDate(date)) {
+        date = date.getFullYear();
+    }
+
+    const decadeOrigin = date - (date % 10);
     return decadeOrigin;
 }
 
